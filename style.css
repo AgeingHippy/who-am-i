@@ -1,33 +1,48 @@
-.night {
-    background-color: black;
-    color: white;
+.night-theme {
+  background-color: black;
+  color: white;
 }
 
-.dusk {
+.dawn-theme {
+  background-color: darkkhaki;
+  color: darkred;
+}
+
+.morning-theme {
+  background-color: darksalmon;
+  color: brown;
+}
+
+.afternoon-theme {
+  background-color: orange;
+  color: brown;
+}
+
+.noon-theme {
+  background-color: lightskyblue;
+  color: darkblue;
+}
+
+.dusk-theme {
     background-color: gray;
-    color:darkred;
-}
-
-.dawn {
-    background-color:darkkhaki;
-    color:darkred ;
-}
-
-.morning {
-    background-color:darksalmon;
-    color: brown;
-}
-
-.afternoon {
-    background-color:orange;
-    color: brown;
-}
-
-.noon {
-    background-color:lightskyblue;
-    color:darkblue;
-}
+    color: darkred;
+  }
 
 .container {
-    display: grid;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.top-right {
+  grid-column: 2 / -1;
+}
+
+img {
+  display: block;
+  margin: auto;
+  height: 100%;
+}
+
+div {
+    padding:10px;
 }

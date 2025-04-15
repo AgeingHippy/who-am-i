@@ -1,49 +1,60 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>WHERE AM I</title>
-        <script src="script.js"></script>
-    </head>
-    <body>
-        <h1 id="info-ip">ip address here</h1>
-        <h2 id="info-time">current time here</h2>
-        <div class="container">
-            <div id="div-geo">
-                <p>Country: <span id="info-country">country here</span></p>
-                <p>Region: <span id="info-region">region here</span></p>
-                <p>City: <span id="info-city">city here</span></p>
-                <p>Latitude: <span id="info-latitude">latitude here</span></p>
-                <p>Longitude: <span id="info-longitude">longitude here</span></p>
-                <p>Time Zone: <span id="info-timezone">timezone here</span></p>
-            </div>
-            <div id="div-country">
-                <img id="country-flag" src="" width="100px" alt="Alternative text">
-                <p>code: <span id="info-country-code">country code here</span></p>
-                <p>population: <span id="info-population">population here</span></p>
-                <p>area: <span id="info-area">area here</span></p>
-                <p>language: <span id="info-language">language here</span></p>
-                <p>code: <span id="info-regional-block">regional block here</span></p>
-            </div>
-            <div id="div-solar">
-                <p>Sunrise: <span id="info-sunrise">sunrise time here</span></p>
-                <p>Sunset: <span id="info-sunset">sunset time here</span></p>
-                <p>Solar Noon: <span id="info-solar-noon">solar noon here</span></p>
-                <p>Day Length: <span id="info-day-length">day length here</span></p>
-            </div>
-            <div id="div-iss">
-                <p>Astronauts in Space: <span id="info-astronaut-count">astronaut count here</span></p>
-                <p>ISS longitude: <span id="info-iss-longitude">longitude here</span></p>
-                <p>ISS latitude: <span id="info-iss-latitude">latitude here</span></p>
-                <p>ISS Position TimeStamp: <span id="info-iss-timestamp">position timestamp here</span></p>
-                <p>Sorry. ISS overhead time is not currently available</p>
-            </div>
-        </div>
-        <script>
-            {
-                initialiseIpAddress(processIpAddress);
-                initialiseAstronauts(processAstroData);
-                initialiseIss(processIssData);
-            }
-        </script>
-    </body>
+  <head>
+    <title>WHERE AM I</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <div class="container">
+        <div>
+            <img id="country-flag" src="" width="200px" alt="Alternative text" />
+          </div>
+          <div class="top-right">
+            <h1 id="info-ip">ip address here</h1>
+            <h2 id="info-time">current time here</h2>
+          </div>
+      <div id="div-geo">
+        <p>Country: <span id="info-country">country here</span></p>
+        <p>code: <span id="info-country-code">country code here</span></p>
+        <p>Region: <span id="info-region">region here</span></p>
+        <p>City: <span id="info-city">city here</span></p>
+        <p>Longitude: <span id="info-longitude">longitude here</span></p>
+        <p>Latitude: <span id="info-latitude">latitude here</span></p>
+        <p>Time Zone: <span id="info-timezone">timezone here</span></p>
+      </div>
+      <div id="div-country">
+        <p>population: <span id="info-population">population here</span></p>
+        <p>area: <span id="info-area">area here</span></p>
+        <p>language: <span id="info-language">language here</span></p>
+        <p>Region: <span id="info-regional-block">regional block here</span></p>
+      </div>
+      <div id="div-solar">
+        <p>Sunrise: <span id="info-sunrise">sunrise time here</span></p>
+        <p>Sunset: <span id="info-sunset">sunset time here</span></p>
+        <p>Solar Noon: <span id="info-solar-noon">solar noon here</span></p>
+        <p>Day Length: <span id="info-day-length">day length here</span></p>
+      </div>
+      <div id="div-iss">
+        <p>
+          Astronauts in Space:
+          <span id="info-astronaut-count">astronaut count here</span>
+        </p>
+        <p>
+          ISS longitude: <span id="info-iss-longitude">longitude here</span>
+        </p>
+        <p>ISS latitude: <span id="info-iss-latitude">latitude here</span></p>
+        <p>
+          ISS Position TimeStamp:
+          <span id="info-iss-timestamp">position timestamp here</span>
+        </p>
+        <p>Sorry. ISS overhead time is not currently available</p>
+      </div>
+    </div>
+    <script>
+      initialiseIpAddress(processIpAddress);
+      initialiseAstronauts(processAstroData);
+      initialiseIss(processIssData);
+    </script>
+  </body>
 </html>

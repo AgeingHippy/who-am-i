@@ -1,27 +1,43 @@
-//Make call to determine browser IP address and callBackFunction with resulting IP address as parameter
-function initialiseIpAddress(callBackFunction) {
-    const getMyIpUrl = "https://api.ipify.org/?format=json";
-    let xhr = new XMLHttpRequest();
-    xhr.timeout = 2000;
-    xhr.open("GET", getMyIpUrl);
-    
-    xhr.onload = function() {
-        let data = JSON.parse(xhr.response);
-        callBackFunction(data.ip);
-    }
+//Compare 2 times, each in format HH24:MI:SS
+//return 1 if t1 > t2
+//return 0 if t1 = t2
+//return -1 if t1 < t2
+function compareTime(t1, t2) {
+  let t1Date = new Date(`1970-01-01T${t1}`);
+  let t2Date = new Date(`1970-01-01T${t2}`);
 
-    xhr.onerror = () => {
-        console.log("ip fetch error");
-    };
-    
-      xhr.ontimeout = () => {
-        console.log("ip fetch timeout");
-    };
-
-    xhr.send();
+  let result;
+  if (t1Date.getTime() > t2Date.getTime()) {
+    return 1;
+  } else if (t1Date.getTime() == t2Date.getTime()) {
+    return 0;
+  } else {
+    return -1;
+  }
 }
 
-/******************************************TEMP - REMOVE ***************************************** */
+//Make call to determine browser IP address and callBackFunction with resulting IP address as parameter
+function initialiseIpAddress(callBackFunction) {
+  const getMyIpUrl = "https://api.ipify.org/?format=json";
+  let xhr = new XMLHttpRequest();
+  xhr.timeout = 2000;
+  xhr.open("GET", getMyIpUrl);
+
+  xhr.onload = function () {
+    let data = JSON.parse(xhr.response);
+    callBackFunction(data.ip);
+  };
+
+  xhr.onerror = () => {
+    console.log("ip fetch error");
+  };
+
+  xhr.ontimeout = () => {
+    console.log("ip fetch timeout");
+  };
+
+  xhr.send();
+}
 
 //geolocate ip address and process callback on the resulting object
 // {
@@ -41,25 +57,28 @@ function initialiseIpAddress(callBackFunction) {
 //   }
 //using corsproxy.io to get past CORS denied
 function initialiseGeolocationData(ip, callBackFunction) {
-    let xhr = new XMLHttpRequest();
-    xhr.timeout = 2000;
-    xhr.open("GET", `https://corsproxy.io/?url=https://api.ip2location.io/?ip=${ip}`);
+  let xhr = new XMLHttpRequest();
+  xhr.timeout = 2000;
+  xhr.open(
+    "GET",
+    `https://corsproxy.io/?url=https://api.ip2location.io/?ip=${ip}`
+  );
 
-    xhr.onload = function() {
-        let data = JSON.parse(xhr.response);
-        geoData = data;
-        callBackFunction(data);
-    }
+  xhr.onload = function () {
+    let data = JSON.parse(xhr.response);
+    geoData = data;
+    callBackFunction(data);
+  };
 
-    xhr.onerror = () => {
-        console.log("ip geolocation fetch error");
-    };
-    
-      xhr.ontimeout = () => {
-        console.log("ip geolocation fetch timeout");
-    };
+  xhr.onerror = () => {
+    console.log("ip geolocation fetch error");
+  };
 
-    xhr.send();
+  xhr.ontimeout = () => {
+    console.log("ip geolocation fetch timeout");
+  };
+
+  xhr.send();
 }
 
 //Fetch country data for the given country code
@@ -91,27 +110,29 @@ function initialiseGeolocationData(ip, callBackFunction) {
 //     "population": 67215293
 //   }
 function initialiseCountryData(countryCode, callBackFunction) {
-    let xhr = new XMLHttpRequest();
-    xhr.timeout = 2000;
-    xhr.open("GET", `https://restcountries.com/v3.1/alpha/${countryCode}?fields=name,capital,region,languages,area,flags,population`);
+  let xhr = new XMLHttpRequest();
+  xhr.timeout = 2000;
+  xhr.open(
+    "GET",
+    `https://restcountries.com/v3.1/alpha/${countryCode}?fields=name,capital,region,languages,area,flags,population`
+  );
 
-    xhr.onload = function() {
-        let data = JSON.parse(xhr.response);
-        countryData = data;
-        callBackFunction(data);
-    }
+  xhr.onload = function () {
+    let data = JSON.parse(xhr.response);
+    countryData = data;
+    callBackFunction(data);
+  };
 
-    xhr.onerror = () => {
-        console.log("ip geolocation fetch error");
-    };
-    
-      xhr.ontimeout = () => {
-        console.log("ip geolocation fetch timeout");
-    };
+  xhr.onerror = () => {
+    console.log("ip geolocation fetch error");
+  };
 
-    xhr.send();
+  xhr.ontimeout = () => {
+    console.log("ip geolocation fetch timeout");
+  };
+
+  xhr.send();
 }
-
 
 //solar data
 //      {
@@ -129,25 +150,28 @@ function initialiseCountryData(countryCode, callBackFunction) {
 //       "utc_offset": 60
 //     }
 function initialiseSolarData(lat, long, callBackFunction) {
-    let xhr = new XMLHttpRequest();
-    xhr.timeout = 2000;
-    xhr.open("GET", `https://corsproxy.io/?url=https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}`);
+  let xhr = new XMLHttpRequest();
+  xhr.timeout = 2000;
+  xhr.open(
+    "GET",
+    `https://corsproxy.io/?https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}&time_format=24`
+  );
 
-    xhr.onload = function() {
-        let data = JSON.parse(xhr.response);
-        solarData = data.results;
-        callBackFunction(data.results);
-    }
+  xhr.onload = function () {
+    let data = JSON.parse(xhr.response);
+    solarData = data.results;
+    callBackFunction(data.results);
+  };
 
-    xhr.onerror = () => {
-        console.log("ip geolocation fetch error");
-    };
-    
-      xhr.ontimeout = () => {
-        console.log("ip geolocation fetch timeout");
-    };
+  xhr.onerror = () => {
+    console.log("ip geolocation fetch error");
+  };
 
-    xhr.send();
+  xhr.ontimeout = () => {
+    console.log("ip geolocation fetch timeout");
+  };
+
+  xhr.send();
 }
 
 //fetch count of people in space
@@ -168,25 +192,28 @@ function initialiseSolarData(lat, long, callBackFunction) {
 //     "message": "success"
 //   }
 function initialiseAstronauts(callBackFunction) {
-    let xhr = new XMLHttpRequest();
-    xhr.timeout = 2000;
-    xhr.open("GET", `https://corsproxy.io/?url=http://api.open-notify.org/astros.json`);
+  let xhr = new XMLHttpRequest();
+  xhr.timeout = 2000;
+  xhr.open(
+    "GET",
+    `https://corsproxy.io/?url=http://api.open-notify.org/astros.json`
+  );
 
-    xhr.onload = function() {
-        let data = JSON.parse(xhr.response);
-        astroData = data;
-        callBackFunction(astroData);
-    }
+  xhr.onload = function () {
+    let data = JSON.parse(xhr.response);
+    astroData = data;
+    callBackFunction(astroData);
+  };
 
-    xhr.onerror = () => {
-        console.log("initialiseAstronauts fetch error");
-    };
-    
-      xhr.ontimeout = () => {
-        console.log("initialiseAstronauts fetch timeout");
-    };
+  xhr.onerror = () => {
+    console.log("initialiseAstronauts fetch error");
+  };
 
-    xhr.send();
+  xhr.ontimeout = () => {
+    console.log("initialiseAstronauts fetch timeout");
+  };
+
+  xhr.send();
 }
 
 //fetch current location of ISS
@@ -199,75 +226,122 @@ function initialiseAstronauts(callBackFunction) {
 //     "message": "success"
 //   }
 function initialiseIss(callBackFunction) {
-    let xhr = new XMLHttpRequest();
-    xhr.timeout = 2000;
-    xhr.open("GET", `http://api.open-notify.org/iss-now.json`);
+  let xhr = new XMLHttpRequest();
+  xhr.timeout = 2000;
+  xhr.open("GET", `http://api.open-notify.org/iss-now.json`);
 
-    xhr.onload = function() {
-        let data = JSON.parse(xhr.response);
-        issData = data;
-        callBackFunction(issData);
-    }
+  xhr.onload = function () {
+    let data = JSON.parse(xhr.response);
+    issData = data;
+    callBackFunction(issData);
+  };
 
-    xhr.onerror = () => {
-        console.log("initialiseAstronauts fetch error");
-    };
-    
-      xhr.ontimeout = () => {
-        console.log("initialiseAstronauts fetch timeout");
-    };
+  xhr.onerror = () => {
+    console.log("initialiseAstronauts fetch error");
+  };
 
-    xhr.send();
+  xhr.ontimeout = () => {
+    console.log("initialiseAstronauts fetch timeout");
+  };
+
+  xhr.send();
 }
 
 //do stuff with the ip address
 function processIpAddress(ip) {
-    //display ip address
-    document.getElementById("info-ip").innerText = ip;
-    //initialise geo-data for ip address
-    if (ip) {
-        initialiseGeolocationData(ip, processGeolocationData);
-    }
-    
+  //display ip address and time
+  document.getElementById("info-ip").innerText = ip;
+  let now=new Date();
+  document.getElementById("info-time").innerText = now.toTimeString();
+  //initialise geo-data for ip address
+  if (ip) {
+    initialiseGeolocationData(ip, processGeolocationData);
+  }
 }
 
 function processGeolocationData(geoData) {
-    //display geolocation data
-    document.getElementById("info-ip").innerText = 
+  //display geolocation data
+  document.getElementById("info-country").innerText = geoData.country_name;
+  document.getElementById("info-country-code").innerText = geoData.country_code;
+  document.getElementById("info-region").innerText = geoData.region_name;
+  document.getElementById("info-city").innerText = geoData.city_name;
+  document.getElementById("info-longitude").innerText = geoData.longitude;
+  document.getElementById("info-latitude").innerText = geoData.latitude;
+  document.getElementById("info-timezone").innerText = geoData.time_zone;
 
-    //initialise countryData
-    if (geoData.country_code) {
-        initialiseCountryData(geoData.country_code,processGeolocationData);
-    }
-    
+  //initialise countryData
+  if (geoData.country_code) {
+    initialiseCountryData(geoData.country_code, processCountryData);
+  }
 
-    //initialise solarData
-    if (geoData.latitude && geoData.longitude) {
-        initialiseSolarData(geoData.latitude, geoData.longitude,processSolarData);
-    }
-    
+  //initialise solarData
+  if (geoData.latitude && geoData.longitude) {
+    initialiseSolarData(geoData.latitude, geoData.longitude, processSolarData);
+  }
 }
 
 function processCountryData(countryData) {
-    //display country data
-    //display flag
+  //display country data
+  document.getElementById("info-population").innerText = countryData.population;
+  document.getElementById("info-area").innerText = countryData.area;
+  let languages = ""
+  for(let l in countryData.languages) {
+    languages += (languages === "" ? languages : languages + " ,")  + countryData.languages[l];
+  }
+  document.getElementById("info-language").innerText = languages;
+  document.getElementById("info-regional-block").innerText = countryData.region;
+
+  //display flag
+  document
+    .getElementById("country-flag")
+    .setAttribute("src", countryData.flags.png);
+  document
+    .getElementById("country-flag")
+    .setAttribute("alt", countryData.flags.alt);
 }
 
 function processSolarData(solarData) {
-    //show dawn, dusk, length of day and solar noon time
-    //configure style based on portion of the day
+  //show dawn, dusk, length of day and solar noon time
+  document.getElementById("info-sunrise").innerText = solarData.sunrise;
+  document.getElementById("info-sunset").innerText = solarData.sunset;
+  document.getElementById("info-solar-noon").innerText = solarData.solar_noon;
+  document.getElementById("info-day-length").innerText = solarData.day_length;
+
+  //configure style based on portion of the day
+  let now = new Date();
+  let timeNow = now.toTimeString().match(/\d{2}:\d{2}:\d{2}/)[0];
+  let regex = new RegExp(/.*-theme/);
+  Array.from(document.body.classList)
+    .filter((className) => regex.test(className))
+    .forEach((className) => document.body.classList.remove(className));
+  if (
+    compareTime(timeNow, solarData.first_light) < 0 ||
+    compareTime(timeNow, solarData.last_light) > 0
+  ) {
+    document.body.classList.add("night-theme");
+  } else if (compareTime(timeNow, solarData.dawn) < 0) {
+    document.body.classList.add("dawn-theme");
+  } else if (compareTime(timeNow, solarData.solar_noon) < 0) {
+    document.body.classList.add("morning-theme");
+  } else if (compareTime(timeNow, solarData.sunset) < 0) {
+    document.body.classList.add("afternoon-theme");
+  } else if (compareTime(timeNow, solarData.last_light) < 0) {
+    document.body.classList.add("dusk-theme");
+  }
 }
 
 function processAstroData(astroData) {
-    //display number of astronauts in space
-    document.getElementById("info-astronaut-count").innerText = astroData.number;
+  //display number of astronauts in space
+  document.getElementById("info-astronaut-count").innerText = astroData.number;
 }
 
 function processIssData(issData) {
-    //display isslocation AND timestamp of location
-    document.getElementById("info-iss-latitude").innerText = issData.iss_position.latitude;
-    document.getElementById("info-iss-longitude").innerText = issData.iss_position.longitude;
-    document.getElementById("info-iss-timestamp").innerText = new Date(issData.timestamp);
+  //display isslocation AND timestamp of location
+  document.getElementById("info-iss-latitude").innerText =
+    issData.iss_position.latitude;
+  document.getElementById("info-iss-longitude").innerText =
+    issData.iss_position.longitude;
+  document.getElementById("info-iss-timestamp").innerText = new Date(
+    issData.timestamp
+  );
 }
-
-

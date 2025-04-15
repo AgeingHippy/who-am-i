@@ -28,7 +28,7 @@ function initialiseIpAddress(callBackFunction) {
     callBackFunction(data.ip);
   };
 
-  xhr.onerror = () => {
+  xhr.onerror = (event) => {
     console.log("ip fetch error");
   };
 
@@ -58,7 +58,7 @@ function initialiseIpAddress(callBackFunction) {
 //using corsproxy.io to get past CORS denied
 function initialiseGeolocationData(ip, callBackFunction) {
   let xhr = new XMLHttpRequest();
-  xhr.timeout = 2000;
+  xhr.timeout = 4000;
   xhr.open(
     "GET",
     `https://corsproxy.io/?url=https://api.ip2location.io/?ip=${ip}`
@@ -70,7 +70,7 @@ function initialiseGeolocationData(ip, callBackFunction) {
     callBackFunction(data);
   };
 
-  xhr.onerror = () => {
+  xhr.onerror = (event) => {
     console.log("ip geolocation fetch error");
   };
 
@@ -111,7 +111,7 @@ function initialiseGeolocationData(ip, callBackFunction) {
 //   }
 function initialiseCountryData(countryCode, callBackFunction) {
   let xhr = new XMLHttpRequest();
-  xhr.timeout = 2000;
+  xhr.timeout = 4000;
   xhr.open(
     "GET",
     `https://restcountries.com/v3.1/alpha/${countryCode}?fields=name,capital,region,languages,area,flags,population`
@@ -123,7 +123,7 @@ function initialiseCountryData(countryCode, callBackFunction) {
     callBackFunction(data);
   };
 
-  xhr.onerror = () => {
+  xhr.onerror = (event) => {
     console.log("ip geolocation fetch error");
   };
 
@@ -151,7 +151,7 @@ function initialiseCountryData(countryCode, callBackFunction) {
 //     }
 function initialiseSolarData(lat, long, callBackFunction) {
   let xhr = new XMLHttpRequest();
-  xhr.timeout = 2000;
+  xhr.timeout = 4000;
   xhr.open(
     "GET",
     `https://corsproxy.io/?https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}&time_format=24`
@@ -163,7 +163,7 @@ function initialiseSolarData(lat, long, callBackFunction) {
     callBackFunction(data.results);
   };
 
-  xhr.onerror = () => {
+  xhr.onerror = (event) => {
     console.log("ip geolocation fetch error");
   };
 
@@ -193,7 +193,7 @@ function initialiseSolarData(lat, long, callBackFunction) {
 //   }
 function initialiseAstronauts(callBackFunction) {
   let xhr = new XMLHttpRequest();
-  xhr.timeout = 2000;
+  xhr.timeout = 4000;
   xhr.open(
     "GET",
     `https://corsproxy.io/?url=http://api.open-notify.org/astros.json`
@@ -205,7 +205,7 @@ function initialiseAstronauts(callBackFunction) {
     callBackFunction(astroData);
   };
 
-  xhr.onerror = () => {
+  xhr.onerror = (event) => {
     console.log("initialiseAstronauts fetch error");
   };
 
@@ -227,7 +227,7 @@ function initialiseAstronauts(callBackFunction) {
 //   }
 function initialiseIss(callBackFunction) {
   let xhr = new XMLHttpRequest();
-  xhr.timeout = 2000;
+  xhr.timeout = 4000;
   xhr.open("GET", `http://api.open-notify.org/iss-now.json`);
 
   xhr.onload = function () {
@@ -236,7 +236,7 @@ function initialiseIss(callBackFunction) {
     callBackFunction(issData);
   };
 
-  xhr.onerror = () => {
+  xhr.onerror = (event) => {
     console.log("initialiseAstronauts fetch error");
   };
 

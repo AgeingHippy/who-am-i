@@ -1,3 +1,21 @@
+# ToDo
+- use UTC and offset to calculate local time so that daya displayed correctly when using VPN
+- Modify displayError() to display messages to the web page rather than console.log
+- Provide facility to specify IP address instead of detect user IP
+- Provide facility to resubmit individual timeOut requests and restart chain from there
+- Make data display prettier
+- Image of sun and moon in background for timeOfDay-theme instead of just colors
+
+# Particular Issues Resolved
+- Encountered: `has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.`
+  - Applied: `https://corsproxy.io` as a proxy server to resolve
+
+- Provided link `https://freegeoip.io/` requires an account and key
+  - Used `https://api.ip2location.io/` instead as this is published using GitHub pages (uses static resources) and I don't want secret keys to be in the source repository.  
+
+
+# Lab Objective
+
 Now you will be making a project that should bring together almost all of what you have learnt so far.
 
 The plan is to make a single page application that:

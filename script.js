@@ -16,6 +16,10 @@ function compareTime(t1, t2) {
   }
 }
 
+function displayError(message) {
+  console.log(message);
+}
+
 //Make call to determine browser IP address and callBackFunction with resulting IP address as parameter
 function initialiseIpAddress(callBackFunction) {
   const getMyIpUrl = "https://api.ipify.org/?format=json";
@@ -24,16 +28,20 @@ function initialiseIpAddress(callBackFunction) {
   xhr.open("GET", getMyIpUrl);
 
   xhr.onload = function () {
-    let data = JSON.parse(xhr.response);
-    callBackFunction(data.ip);
+    try {
+      let data = JSON.parse(xhr.response);
+      callBackFunction(data.ip);
+    } catch(error) {
+      displayError(`ERROR: ${error.name} ${error.message}`)
+    }
   };
 
   xhr.onerror = (event) => {
-    console.log("ip fetch error");
+    displayError("ip fetch error");
   };
 
   xhr.ontimeout = () => {
-    console.log("ip fetch timeout");
+    displayError("ip fetch timeout");
   };
 
   xhr.send();
@@ -65,17 +73,20 @@ function initialiseGeolocationData(ip, callBackFunction) {
   );
 
   xhr.onload = function () {
-    let data = JSON.parse(xhr.response);
-    geoData = data;
-    callBackFunction(data);
+    try {
+      let data = JSON.parse(xhr.response);
+      callBackFunction(data);
+    } catch(error) {
+      displayError(`ERROR: ${error.name} ${error.message}`)
+    }
   };
 
   xhr.onerror = (event) => {
-    console.log("ip geolocation fetch error");
+    displayError("ip geolocation fetch error");
   };
 
   xhr.ontimeout = () => {
-    console.log("ip geolocation fetch timeout");
+    displayError("ip geolocation fetch timeout");
   };
 
   xhr.send();
@@ -118,17 +129,20 @@ function initialiseCountryData(countryCode, callBackFunction) {
   );
 
   xhr.onload = function () {
-    let data = JSON.parse(xhr.response);
-    countryData = data;
-    callBackFunction(data);
+    try {
+      let data = JSON.parse(xhr.response);
+      callBackFunction(data);
+    } catch(error) {
+      displayError(`ERROR: ${error.name} ${error.message}`)
+    }
   };
 
   xhr.onerror = (event) => {
-    console.log("ip geolocation fetch error");
+    displayError("ip geolocation fetch error");
   };
 
   xhr.ontimeout = () => {
-    console.log("ip geolocation fetch timeout");
+    displayError("ip geolocation fetch timeout");
   };
 
   xhr.send();
@@ -158,17 +172,20 @@ function initialiseSolarData(lat, long, callBackFunction) {
   );
 
   xhr.onload = function () {
-    let data = JSON.parse(xhr.response);
-    solarData = data.results;
-    callBackFunction(data.results);
+    try {
+      let data = JSON.parse(xhr.response);
+      callBackFunction(data.results);
+    } catch(error) {
+      displayError(`ERROR: ${error.name} ${error.message}`)
+    }
   };
 
   xhr.onerror = (event) => {
-    console.log("ip geolocation fetch error");
+    displayError("ip geolocation fetch error");
   };
 
   xhr.ontimeout = () => {
-    console.log("ip geolocation fetch timeout");
+    displayError("ip geolocation fetch timeout");
   };
 
   xhr.send();
@@ -200,17 +217,20 @@ function initialiseAstronauts(callBackFunction) {
   );
 
   xhr.onload = function () {
-    let data = JSON.parse(xhr.response);
-    astroData = data;
-    callBackFunction(astroData);
+    try {
+      let data = JSON.parse(xhr.response);
+      callBackFunction(data);
+    } catch(error) {
+      displayError(`ERROR: ${error.name} ${error.message}`)
+    }
   };
 
   xhr.onerror = (event) => {
-    console.log("initialiseAstronauts fetch error");
+    displayError("initialiseAstronauts fetch error");
   };
 
   xhr.ontimeout = () => {
-    console.log("initialiseAstronauts fetch timeout");
+    displayError("initialiseAstronauts fetch timeout");
   };
 
   xhr.send();
@@ -231,17 +251,20 @@ function initialiseIss(callBackFunction) {
   xhr.open("GET", `https://corsproxy.io/?url=http://api.open-notify.org/iss-now.json`);
 
   xhr.onload = function () {
-    let data = JSON.parse(xhr.response);
-    issData = data;
-    callBackFunction(issData);
+    try {
+      let data = JSON.parse(xhr.response);
+      callBackFunction(data);
+    } catch(error) {
+      displayError(`ERROR: ${error.name} ${error.message}`)
+    }
   };
 
   xhr.onerror = (event) => {
-    console.log("initialiseAstronauts fetch error");
+    displayError("initialiseAstronauts fetch error");
   };
 
   xhr.ontimeout = () => {
-    console.log("initialiseAstronauts fetch timeout");
+    displayError("initialiseAstronauts fetch timeout");
   };
 
   xhr.send();
@@ -286,7 +309,7 @@ function processCountryData(countryData) {
   document.getElementById("info-area").innerText = countryData.area;
   let languages = ""
   for(let l in countryData.languages) {
-    languages += (languages === "" ? languages : languages + " ,")  + countryData.languages[l];
+    languages += (languages === "" ? "" : " ,")  + countryData.languages[l];
   }
   document.getElementById("info-language").innerText = languages;
   document.getElementById("info-regional-block").innerText = countryData.region;

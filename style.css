@@ -1,0 +1,33 @@
+.night {
+    background-color: black;
+    color: white;
+}
+
+.dusk {
+    background-color: gray;
+    color:darkred;
+}
+
+.dawn {
+    background-color:darkkhaki;
+    color:darkred ;
+}
+
+.morning {
+    background-color:darksalmon;
+    color: brown;
+}
+
+.afternoon {
+    background-color:orange;
+    color: brown;
+}
+
+.noon {
+    background-color:lightskyblue;
+    color:darkblue;
+}
+
+.container {
+    display: grid;
+}

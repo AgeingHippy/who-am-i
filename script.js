@@ -22,7 +22,6 @@ function initialiseIpAddress(callBackFunction) {
 }
 
 /******************************************TEMP - REMOVE ***************************************** */
-let geoData;
 
 //geolocate ip address and process callback on the resulting object
 // {
@@ -91,8 +90,6 @@ function initialiseGeolocationData(ip, callBackFunction) {
 //     "area": 242900,
 //     "population": 67215293
 //   }
-let countryData;
-
 function initialiseCountryData(countryCode, callBackFunction) {
     let xhr = new XMLHttpRequest();
     xhr.timeout = 2000;
@@ -131,11 +128,10 @@ function initialiseCountryData(countryCode, callBackFunction) {
 //       "timezone": "Europe/London",
 //       "utc_offset": 60
 //     }
-let solarData;
-function initSolarData(lat, long, callBackFunction) {
+function initialiseSolarData(lat, long, callBackFunction) {
     let xhr = new XMLHttpRequest();
     xhr.timeout = 2000;
-    xhr.open("GET", `https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}`);
+    xhr.open("GET", `https://corsproxy.io/?url=https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}`);
 
     xhr.onload = function() {
         let data = JSON.parse(xhr.response);
@@ -155,11 +151,26 @@ function initSolarData(lat, long, callBackFunction) {
 }
 
 //fetch count of people in space
-let astroData;
+// {
+//     "people": [
+//       {
+//         "craft": "ISS",
+//         "name": "Oleg Kononenko"
+//       },
+//       {
+//         "craft": "ISS",
+//         "name": "Nikolai Chub"
+//       },
+//       ...
+//       ...
+//     ],
+//     "number": 12,
+//     "message": "success"
+//   }
 function initialiseAstronauts(callBackFunction) {
     let xhr = new XMLHttpRequest();
     xhr.timeout = 2000;
-    xhr.open("GET", `http://api.open-notify.org/astros.json`);
+    xhr.open("GET", `https://corsproxy.io/?url=http://api.open-notify.org/astros.json`);
 
     xhr.onload = function() {
         let data = JSON.parse(xhr.response);
@@ -179,7 +190,14 @@ function initialiseAstronauts(callBackFunction) {
 }
 
 //fetch current location of ISS
-let issData;
+// {
+//     "timestamp": 1744716282,
+//     "iss_position": {
+//       "longitude": "17.9555",
+//       "latitude": "41.5722"
+//     },
+//     "message": "success"
+//   }
 function initialiseIss(callBackFunction) {
     let xhr = new XMLHttpRequest();
     xhr.timeout = 2000;
@@ -204,16 +222,30 @@ function initialiseIss(callBackFunction) {
 
 //do stuff with the ip address
 function processIpAddress(ip) {
-
     //display ip address
+    document.getElementById("info-ip").innerText = ip;
     //initialise geo-data for ip address
-
+    if (ip) {
+        initialiseGeolocationData(ip, processGeolocationData);
+    }
+    
 }
 
-function processGeolocationData(deoData) {
+function processGeolocationData(geoData) {
     //display geolocation data
+    document.getElementById("info-ip").innerText = 
 
     //initialise countryData
+    if (geoData.country_code) {
+        initialiseCountryData(geoData.country_code,processGeolocationData);
+    }
+    
+
+    //initialise solarData
+    if (geoData.latitude && geoData.longitude) {
+        initialiseSolarData(geoData.latitude, geoData.longitude,processSolarData);
+    }
+    
 }
 
 function processCountryData(countryData) {
@@ -228,10 +260,14 @@ function processSolarData(solarData) {
 
 function processAstroData(astroData) {
     //display number of astronauts in space
+    document.getElementById("info-astronaut-count").innerText = astroData.number;
 }
 
 function processIssData(issData) {
     //display isslocation AND timestamp of location
+    document.getElementById("info-iss-latitude").innerText = issData.iss_position.latitude;
+    document.getElementById("info-iss-longitude").innerText = issData.iss_position.longitude;
+    document.getElementById("info-iss-timestamp").innerText = new Date(issData.timestamp);
 }
 
 

@@ -228,7 +228,7 @@ function initialiseAstronauts(callBackFunction) {
 function initialiseIss(callBackFunction) {
   let xhr = new XMLHttpRequest();
   xhr.timeout = 4000;
-  xhr.open("GET", `http://api.open-notify.org/iss-now.json`);
+  xhr.open("GET", `https://corsproxy.io/?url=http://api.open-notify.org/iss-now.json`);
 
   xhr.onload = function () {
     let data = JSON.parse(xhr.response);

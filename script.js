@@ -166,7 +166,7 @@ function initialiseCountryData(countryCode, callBackFunction) {
 //       "timezone": "Europe/London",
 //       "utc_offset": 60
 //     }
-function initialiseSolarData(lat, long, callBackFunction) {
+function initialiseSolarData(lat, long, simDate, callBackFunction) {
   let xhr = new XMLHttpRequest();
   xhr.timeout = 4000;
   xhr.open(
@@ -177,7 +177,7 @@ function initialiseSolarData(lat, long, callBackFunction) {
   xhr.onload = function () {
     try {
       let data = JSON.parse(xhr.response);
-      callBackFunction(data.results);
+      callBackFunction(simDate, data.results);
     } catch(error) {
       displayError(`ERROR: ${error.name} ${error.message}`)
     }
@@ -305,7 +305,7 @@ function processGeolocationData(geoData) {
 
   //initialise solarData
   if (geoData.latitude && geoData.longitude) {
-    initialiseSolarData(geoData.latitude, geoData.longitude, processSolarData);
+    initialiseSolarData(geoData.latitude, geoData.longitude, simDate, processSolarData);
   }
 }
 
@@ -329,7 +329,7 @@ function processCountryData(countryData) {
     .setAttribute("alt", countryData.flags.alt);
 }
 
-function processSolarData(solarData) {
+function processSolarData(simDate, solarData) {
   //show dawn, dusk, length of day and solar noon time
   document.getElementById("info-sunrise").innerText = solarData.sunrise;
   document.getElementById("info-sunset").innerText = solarData.sunset;
@@ -340,9 +340,8 @@ function processSolarData(solarData) {
   simDate.setTimeZoneName(solarData.timezone);
   displayTime(simDate);
 
-  //configure style based on portion of the day USIN simDate
-  let now = simDate;
-  let timeNow = now.toTimeString().match(/\d{2}:\d{2}:\d{2}/)[0];
+  //configure style based on portion of the day USING simDate
+  let timeNow = simDate.toTimeString().match(/\d{2}:\d{2}:\d{2}/)[0];
   let regex = new RegExp(/.*-theme/);
   Array.from(document.body.classList)
     .filter((className) => regex.test(className))

@@ -1,3 +1,6 @@
+//Todo - Figure out how modules and imports work
+// import SimDate from './timeSim.js';
+
 //Compare 2 times, each in format HH24:MI:SS
 //return 1 if t1 > t2
 //return 0 if t1 = t2
@@ -274,8 +277,6 @@ function initialiseIss(callBackFunction) {
 function processIpAddress(ip) {
   //display ip address and time
   document.getElementById("info-ip").innerText = ip;
-  let now=new Date();
-  document.getElementById("info-time").innerText = now.toTimeString();
   //initialise geo-data for ip address
   if (ip) {
     initialiseGeolocationData(ip, processGeolocationData);
@@ -291,6 +292,11 @@ function processGeolocationData(geoData) {
   document.getElementById("info-longitude").innerText = geoData.longitude;
   document.getElementById("info-latitude").innerText = geoData.latitude;
   document.getElementById("info-timezone").innerText = geoData.time_zone;
+
+  //initialise global simDate object;
+  simDate = new SimDate(SimDate.timezoneToOffset(geoData.time_zone));
+  //display date/time data
+  displayTime(simDate);
 
   //initialise countryData
   if (geoData.country_code) {
@@ -330,8 +336,12 @@ function processSolarData(solarData) {
   document.getElementById("info-solar-noon").innerText = solarData.solar_noon;
   document.getElementById("info-day-length").innerText = solarData.day_length;
 
-  //configure style based on portion of the day
-  let now = new Date();
+  //update display of date/time data
+  simDate.setTimeZoneName(solarData.timezone);
+  displayTime(simDate);
+
+  //configure style based on portion of the day USIN simDate
+  let now = simDate;
   let timeNow = now.toTimeString().match(/\d{2}:\d{2}:\d{2}/)[0];
   let regex = new RegExp(/.*-theme/);
   Array.from(document.body.classList)
@@ -367,4 +377,8 @@ function processIssData(issData) {
   document.getElementById("info-iss-timestamp").innerText = new Date(
     issData.timestamp
   );
+}
+
+function displayTime(simDate) {
+  document.getElementById("info-time").innerText = simDate.toTimeString();
 }

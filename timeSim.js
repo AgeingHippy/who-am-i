@@ -33,7 +33,7 @@
   }
 
   #simGetTime(now) {
-    return now.getTime() + (this.#offset - now.getTimezoneOffset())*60*1000;
+    return now.getTime() - (this.#offset - now.getTimezoneOffset())*60*1000;
   }
 
   toTimeString() {

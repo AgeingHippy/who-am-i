@@ -28,7 +28,7 @@
         <p>Population: <span id="info-population">population here</span></p>
         <p>Area: <span id="info-area">area here</span></p>
         <p>Language: <span id="info-language">language here</span></p>
-        <p>Region: <span id="info-regional-block">regional block here</span></p>
+        <p>Geographical Region: <span id="info-regional-block">regional block here</span></p>
       </div>
       <div id="div-solar">
         <p>Sunrise: <span id="info-sunrise">sunrise time here</span></p>
@@ -53,9 +53,11 @@
       </div>
     </div>
     <script>
-      initialiseIpAddress(processIpAddress);
-      initialiseAstronauts(processAstroData);
-      initialiseIss(processIssData);
+      window.onload = function () {
+        getAndDisplayLocation();
+        getAndDiplayAstronauts();
+        getAndDisplayIss();
+      }
     </script>
   </body>
 </html>

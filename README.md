@@ -13,6 +13,13 @@
 - Provided link `https://freegeoip.io/` requires an account and key
   - Used `https://api.ip2location.io/` instead as this is published using GitHub pages (uses static resources) and I don't want secret keys to be in the source repository.  
 
+# Note
+
+This lab is identical for 08 and 09.
+
+- See branch `js101--lab-08` for lab 08 solution using `XMLHttpRequest`
+
+- See branch `main` for for 09 solution using `Fetch, Promise and async`
 
 # Lab Objective
 

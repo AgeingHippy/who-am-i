@@ -23,34 +23,48 @@ function displayError(message) {
   console.log(message);
 }
 
-//Make call to determine browser IP address and callBackFunction with resulting IP address as parameter
-function initialiseIpAddress(callBackFunction) {
-  const getMyIpUrl = "https://api.ipify.org/?format=json";
-  let xhr = new XMLHttpRequest();
-  xhr.timeout = 2000;
-  xhr.open("GET", getMyIpUrl);
+//fetch ip address and related data and display
+async function getAndDisplayLocation() {
+  try {
+    let ip = await getIpAddress();
 
-  xhr.onload = function () {
-    try {
-      let data = JSON.parse(xhr.response);
-      callBackFunction(data.ip);
-    } catch(error) {
-      displayError(`ERROR: ${error.name} ${error.message}`)
-    }
-  };
+    //display ip address and time
+    document.getElementById("info-ip").innerText = ip;
 
-  xhr.onerror = (event) => {
-    displayError("ip fetch error");
-  };
+    //get geoLocation data for ip address
+    let geoData = await getGeolocationData(ip);
 
-  xhr.ontimeout = () => {
-    displayError("ip fetch timeout");
-  };
+    //display geoLocation data
+    displayGeolocationData(geoData);
 
-  xhr.send();
+    //initialise simDate  (Simulated local date according to ip address location)
+    simDate = new SimDate(SimDate.timezoneToOffset(geoData.time_zone));
+    //display date/time data
+    displayTime(simDate);
+
+    getAndDisplayCountryData(geoData.country_code);
+
+    getAndDisplaySolarData(geoData.latitude, geoData.longitude, simDate);
+
+  } catch (error) {
+    displayError(`ERROR: ${error.name} ${error.message}`);
+  }
 }
 
-//geolocate ip address and process callback on the resulting object
+//Make call to determine and return browser IP address
+async function getIpAddress() {
+  try {
+    let ipResult = await fetch("https://api.ipify.org/?format=json");
+    let ipData = await ipResult.json();
+    let ip = ipData.ip;
+    return ip;
+  } catch (error) {
+    displayError(`ERROR: ${error.name} ${error.message}`);
+    throw new Error("Error determining IP address");
+  }
+}
+
+//geolocate ip address and return result
 // {
 //     "ip": "82.15.102.159",
 //     "country_code": "GB",
@@ -67,32 +81,25 @@ function initialiseIpAddress(callBackFunction) {
 //     "message": "Limit to 1,000 queries per day. Sign up for a Free plan at https://www.ip2location.io to get 30K queries per month."
 //   }
 //using corsproxy.io to get past CORS denied
-function initialiseGeolocationData(ip, callBackFunction) {
-  let xhr = new XMLHttpRequest();
-  xhr.timeout = 4000;
-  xhr.open(
-    "GET",
-    `https://corsproxy.io/?url=https://api.ip2location.io/?ip=${ip}`
-  );
+async function getGeolocationData(ip) {
+  try {
+    let geoResult = await fetch(
+      `https://corsproxy.io/?url=https://api.ip2location.io/?ip=${ip}`
+    );
+    let geoData = await geoResult.json();
+    return geoData;
+  } catch (error) {
+    displayError(`ERROR: ${error.name} ${error.message}`);
+    throw new Error("Error determining geolocation data");
+  }
+}
 
-  xhr.onload = function () {
-    try {
-      let data = JSON.parse(xhr.response);
-      callBackFunction(data);
-    } catch(error) {
-      displayError(`ERROR: ${error.name} ${error.message}`)
-    }
-  };
-
-  xhr.onerror = (event) => {
-    displayError("ip geolocation fetch error");
-  };
-
-  xhr.ontimeout = () => {
-    displayError("ip geolocation fetch timeout");
-  };
-
-  xhr.send();
+//fetch and display country data
+async function getAndDisplayCountryData(countryCode) {
+  if (countryCode) {
+    let countryData = await getCountryData(countryCode);
+    displayCountryData(countryData);
+  }
 }
 
 //Fetch country data for the given country code
@@ -123,35 +130,25 @@ function initialiseGeolocationData(ip, callBackFunction) {
 //     "area": 242900,
 //     "population": 67215293
 //   }
-function initialiseCountryData(countryCode, callBackFunction) {
-  let xhr = new XMLHttpRequest();
-  xhr.timeout = 4000;
-  xhr.open(
-    "GET",
-    `https://restcountries.com/v3.1/alpha/${countryCode}?fields=name,capital,region,languages,area,flags,population`
-  );
-
-  xhr.onload = function () {
-    try {
-      let data = JSON.parse(xhr.response);
-      callBackFunction(data);
-    } catch(error) {
-      displayError(`ERROR: ${error.name} ${error.message}`)
-    }
-  };
-
-  xhr.onerror = (event) => {
-    displayError("ip geolocation fetch error");
-  };
-
-  xhr.ontimeout = () => {
-    displayError("ip geolocation fetch timeout");
-  };
-
-  xhr.send();
+async function getCountryData(countryCode) {
+  try {
+    let response = await fetch(
+      `https://restcountries.com/v3.1/alpha/${countryCode}?fields=name,capital,region,languages,area,flags,population`
+    );
+    let data = await response.json();
+    return data;
+  } catch (error) {
+    displayError(`ERROR: ${error.name} ${error.message}`);
+    throw new Error("Error determining country data");
+  }
 }
 
-//solar data
+async function getAndDisplaySolarData(lat, long, simDate) {
+  let solarData = await getSolarData(lat, long, simDate);
+  displaySolarData(simDate, solarData);
+}
+
+//get and return solar data
 //      {
 //       "date": "2025-04-15",
 //       "sunrise": "6:05:27 AM",
@@ -166,32 +163,17 @@ function initialiseCountryData(countryCode, callBackFunction) {
 //       "timezone": "Europe/London",
 //       "utc_offset": 60
 //     }
-function initialiseSolarData(lat, long, simDate, callBackFunction) {
-  let xhr = new XMLHttpRequest();
-  xhr.timeout = 4000;
-  xhr.open(
-    "GET",
-    `https://corsproxy.io/?https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}&time_format=24`
-  );
-
-  xhr.onload = function () {
-    try {
-      let data = JSON.parse(xhr.response);
-      callBackFunction(simDate, data.results);
-    } catch(error) {
-      displayError(`ERROR: ${error.name} ${error.message}`)
-    }
-  };
-
-  xhr.onerror = (event) => {
-    displayError("ip geolocation fetch error");
-  };
-
-  xhr.ontimeout = () => {
-    displayError("ip geolocation fetch timeout");
-  };
-
-  xhr.send();
+async function getSolarData(lat, long, simDate) {
+  try {
+    let result = await fetch(
+      `https://corsproxy.io/?https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}&time_format=24`
+    );
+    let data = await result.json();
+    return data.results;
+  } catch (error) {
+    displayError(`ERROR: ${error.name} ${error.message}`);
+    throw new Error("Error determining solar data");
+  }
 }
 
 //fetch count of people in space
@@ -211,35 +193,20 @@ function initialiseSolarData(lat, long, simDate, callBackFunction) {
 //     "number": 12,
 //     "message": "success"
 //   }
-function initialiseAstronauts(callBackFunction) {
-  let xhr = new XMLHttpRequest();
-  xhr.timeout = 4000;
-  xhr.open(
-    "GET",
-    `https://corsproxy.io/?url=http://api.open-notify.org/astros.json`
-  );
-
-  xhr.onload = function () {
-    try {
-      let data = JSON.parse(xhr.response);
-      callBackFunction(data);
-    } catch(error) {
-      displayError(`ERROR: ${error.name} ${error.message}`)
-    }
-  };
-
-  xhr.onerror = (event) => {
-    displayError("initialiseAstronauts fetch error");
-  };
-
-  xhr.ontimeout = () => {
-    displayError("initialiseAstronauts fetch timeout");
-  };
-
-  xhr.send();
+async function getAndDiplayAstronauts() {
+  try {
+    let result = await fetch(
+      `https://corsproxy.io/?url=http://api.open-notify.org/astros.json`
+    );
+    let astroData = await result.json();
+    //display number of astronauts in space
+    document.getElementById("info-astronaut-count").innerText = astroData.number;
+  } catch (error) {
+    displayError(`ERROR: ${error.name} ${error.message}`);
+  }
 }
 
-//fetch current location of ISS
+//fetch and display current location of ISS
 // {
 //     "timestamp": 1744716282,
 //     "iss_position": {
@@ -248,42 +215,26 @@ function initialiseAstronauts(callBackFunction) {
 //     },
 //     "message": "success"
 //   }
-function initialiseIss(callBackFunction) {
-  let xhr = new XMLHttpRequest();
-  xhr.timeout = 4000;
-  xhr.open("GET", `https://corsproxy.io/?url=http://api.open-notify.org/iss-now.json`);
-
-  xhr.onload = function () {
-    try {
-      let data = JSON.parse(xhr.response);
-      callBackFunction(data);
-    } catch(error) {
-      displayError(`ERROR: ${error.name} ${error.message}`)
-    }
-  };
-
-  xhr.onerror = (event) => {
-    displayError("initialiseAstronauts fetch error");
-  };
-
-  xhr.ontimeout = () => {
-    displayError("initialiseAstronauts fetch timeout");
-  };
-
-  xhr.send();
-}
-
-//do stuff with the ip address
-function processIpAddress(ip) {
-  //display ip address and time
-  document.getElementById("info-ip").innerText = ip;
-  //initialise geo-data for ip address
-  if (ip) {
-    initialiseGeolocationData(ip, processGeolocationData);
+async function getAndDisplayIss() {
+  try {
+    let result = await fetch(
+      `https://corsproxy.io/?url=http://api.open-notify.org/iss-now.json`
+    );
+    let issData = await result.json();
+    //display isslocation AND timestamp of location
+    document.getElementById("info-iss-latitude").innerText =
+      issData.iss_position.latitude;
+    document.getElementById("info-iss-longitude").innerText =
+      issData.iss_position.longitude;
+    document.getElementById("info-iss-timestamp").innerText = new Date(
+      issData.timestamp
+    );
+  } catch (error) {
+    displayError(`ERROR: ${error.name} ${error.message}`);
   }
 }
 
-function processGeolocationData(geoData) {
+function displayGeolocationData(geoData) {
   //display geolocation data
   document.getElementById("info-country").innerText = geoData.country_name;
   document.getElementById("info-country-code").innerText = geoData.country_code;
@@ -292,30 +243,15 @@ function processGeolocationData(geoData) {
   document.getElementById("info-longitude").innerText = geoData.longitude;
   document.getElementById("info-latitude").innerText = geoData.latitude;
   document.getElementById("info-timezone").innerText = geoData.time_zone;
-
-  //initialise global simDate object;
-  simDate = new SimDate(SimDate.timezoneToOffset(geoData.time_zone));
-  //display date/time data
-  displayTime(simDate);
-
-  //initialise countryData
-  if (geoData.country_code) {
-    initialiseCountryData(geoData.country_code, processCountryData);
-  }
-
-  //initialise solarData
-  if (geoData.latitude && geoData.longitude) {
-    initialiseSolarData(geoData.latitude, geoData.longitude, simDate, processSolarData);
-  }
 }
 
-function processCountryData(countryData) {
+function displayCountryData(countryData) {
   //display country data
   document.getElementById("info-population").innerText = countryData.population;
   document.getElementById("info-area").innerText = countryData.area;
-  let languages = ""
-  for(let l in countryData.languages) {
-    languages += (languages === "" ? "" : " ,")  + countryData.languages[l];
+  let languages = "";
+  for (let l in countryData.languages) {
+    languages += (languages === "" ? "" : " ,") + countryData.languages[l];
   }
   document.getElementById("info-language").innerText = languages;
   document.getElementById("info-regional-block").innerText = countryData.region;
@@ -329,7 +265,7 @@ function processCountryData(countryData) {
     .setAttribute("alt", countryData.flags.alt);
 }
 
-function processSolarData(simDate, solarData) {
+function displaySolarData(simDate, solarData) {
   //show dawn, dusk, length of day and solar noon time
   document.getElementById("info-sunrise").innerText = solarData.sunrise;
   document.getElementById("info-sunset").innerText = solarData.sunset;
@@ -360,22 +296,6 @@ function processSolarData(simDate, solarData) {
   } else if (compareTime(timeNow, solarData.last_light) < 0) {
     document.body.classList.add("dusk-theme");
   }
-}
-
-function processAstroData(astroData) {
-  //display number of astronauts in space
-  document.getElementById("info-astronaut-count").innerText = astroData.number;
-}
-
-function processIssData(issData) {
-  //display isslocation AND timestamp of location
-  document.getElementById("info-iss-latitude").innerText =
-    issData.iss_position.latitude;
-  document.getElementById("info-iss-longitude").innerText =
-    issData.iss_position.longitude;
-  document.getElementById("info-iss-timestamp").innerText = new Date(
-    issData.timestamp
-  );
 }
 
 function displayTime(simDate) {

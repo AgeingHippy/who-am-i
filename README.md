@@ -1,3 +1,7 @@
+# CodingNomads labs 08 and 09
+
+Access at https://ageinghippy.github.io/who-am-i/
+
 # ToDo
 - [x] use UTC and offset to calculate local time *according to ip address location* so that the date and timeOfDay-theme is displayed correctly when using VPN
 - [] Modify displayError() to display messages to the web page rather than console.log
